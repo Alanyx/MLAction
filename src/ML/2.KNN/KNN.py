@@ -29,13 +29,13 @@ def createDataSet():
 def classfy0(inX, dataSet, labels, k):
     """
     分类
-    :param inX: 用于对输入向量分类
+    :param inX: 输入向量
     :param dataSet: 输入对训练数据集
     :param labels: 标签向量
     :param k: 选择最近邻居的数量
     :return:
     """
-    # 1.距离计算
+    # 1.距离计算 此处采用欧式距离
     # shape[0]是第二维的长度（即列数）；shape[1]是第一维的长度（即行数）
     dataSetSize = dataSet.shape[0]
     diffMat = tile(inX, (dataSetSize, 1)) - dataSet
@@ -48,16 +48,18 @@ def classfy0(inX, dataSet, labels, k):
     # 开方
     distances = sqDistances ** 0.5
     # argsort()根据距离从小到大排序，然后返回对应的索引
+    # todo 返回索引是什么作用
     sortedDisIndicies = distances.argsort()
 
     # 2.选择距离最小的k个点
     classCount = {}
     for i in range(k):
         # 找到该样本的类型
+        # todo 这个labels[sortedDisIndicies[i]]返回的是什么类型为什么是"A","B"，没有明白
         voteIlbale = labels[sortedDisIndicies[i]]
         classCount[voteIlbale] = classCount.get(voteIlbale, 0) + 1
 
-    # 3.排序并返回出现最多的那个类型
+    # 3.排序并返回出现最多的那个类型  items()方法见备注
     sortedClassCount = sorted(classCount.items(), key=operator.itemgetter(1), reverse=True)
     return sortedClassCount[0][0]
 
@@ -78,12 +80,12 @@ def file2matrix(filename):
     """
     导入训练数据
     :param filename:数据文件路径
-    :return:数据矩阵returnMat和对应的类别classLabelVector
+    :return: 数据矩阵returnMat和对应的类别classLabelVector
     """
     fr = open(filename)
     # 获得文件中的数据的行数
     numberOfLines = len(fr.readlines())
-    # 生成一个空矩阵用于返回数据
+    # 生成一个空矩阵用于返回数据(3:代表3个特征)
     returnMat = zeros((numberOfLines, 3))
     classLabelVector = []
     fr = open(filename)
@@ -94,7 +96,8 @@ def file2matrix(filename):
         line = line.strip()
         listFromLine = line.split("\t")
         # 每列的属性数据
-        # todo 查一下这个returnMat[index, :]矩阵格式的含义
+        # returnMat[index, :]返回从index起始的所有列的数组
+        # todo 查看一下类型是数组还是矩阵
         returnMat[index, :] = listFromLine[0:3]
         # 每列的类别数据：即label标签数据
         classLabelVector.append(int(listFromLine[-1]))
@@ -104,12 +107,13 @@ def file2matrix(filename):
 
 def autoNorm(dataSet):
     """
-    归一化特征值：消除属性之间量级不同导致的影响
+    归一化特征值：消除特征之间量级不同导致的影响
     :param dataSet: 数据集
     :return: 归一化后的数据集normDataSet,范围ranges,最小值minVals
     """
     # 计算属性的最大/最小值/范围
-    # todo 为什么要取0？无参数不行吗
+    # todo 为什么要取0？无参数不行吗，断点无参数看看结果
+    minVals0 = dataSet.min()
     minVals = dataSet.min(0)
     maxVals = dataSet.max(0)
     ranges = maxVals - minVals
@@ -210,6 +214,6 @@ def handwritringClassTest():
 
 
 if __name__ == '__main__':
-    # test1()
-    datingClassTest()
+    test1()
+    # datingClassTest()
     # handwritringClassTest()
