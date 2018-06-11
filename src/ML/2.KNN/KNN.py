@@ -39,8 +39,6 @@ def classfy0(inX, dataSet, labels, k):
     # shape[0]是第二维的长度（即列数）；shape[1]是第一维的长度（即行数）
     dataSetSize = dataSet.shape[0]
     diffMat = tile(inX, (dataSetSize, 1)) - dataSet
-    #  todo 看一下diffMat长啥样
-    # print(diffMat)
     # 取平方
     sqDiffMat = diffMat ** 2
     # 将矩阵的每一行相加
@@ -135,18 +133,19 @@ def autoNorm(dataSet):
 
 def datingClassTest():
     """
-    约会网站的测试方法
+    约会网站的测试方法:将分类错误的数量和分类错误率打印出来
     :return: 错误数errorCount
     """
     # 设置测试数据的一个比例（训练数据比例=1-hoRatio）
     hoRatio = 0.1
     # 从文件中加载数据
     # todo 文件加载路径尝试改变绝对路径和相对路径
-    datingDataMat, datingLabels = file2matrix("/Users/yinxing/03workspace/self/MLAction/src/ML/2.KNN/datingTestSet2.txt")
+    datingDataMat, datingLabels = file2matrix(
+        "/Users/yinxing/03workspace/self/MLAction/src/ML/2.KNN/datingTestSet2.txt")
     # 归一化数据
     normMat, ranges, minVals = autoNorm(datingDataMat)
     # m为矩阵的第一维（行数）
-    m = normMat.shape[1]
+    m = normMat.shape[0]
     # 设置测试的样本数量
     numTestVecs = int(m * hoRatio)
     # print("numTestVecs=",numTestVecs)
@@ -179,41 +178,47 @@ def img2Vector(filename):
 
 
 def handwritringClassTest():
+    """
+    手写数字识别系统: 打印分类错误数和分类错误率
+    :return: None
+    """
     # 1.导入数据
     hwLables = []
-    # todo 文件加载路径尝试改变绝对路径和相对路径
-    trainingFileList = listdir("2.KNN/trainingDigits")
-    # todo 为什么取list的长度，直观理解是什么
+    trainingFileList = listdir("/Users/yinxing/03workspace/self/MLAction/src/ML/2.KNN/trainingDigits")
+    # list的长度是训练文件夹中.txt文件数，每一个文件通过img2Vector()转化为一行1 * 1024的矩阵，共有m行
     m = len(trainingFileList)
-    trainingMat = zeros(m, 1024)
+    trainingMat = zeros((m, 1024))
     # hwLabels存储0～9对应的index位置，trainingMat存放的每个位置对应的图片向量
     for i in range(m):
         fileNamestr = trainingFileList[i]
-        # todo 下面两行[0]是什么操作？
+        # 获取.txt文件名，通过切分"."和"_"，获取这个文件的类别标签
         fileStr = fileNamestr.split(".")[0]
-        classNumStr = int(fileStr.split("_"))[0]
+        classNumStr = int(fileStr.split("_")[0])
         hwLables.append(classNumStr)
         # 将 32 * 32的矩阵转化为 1 * 1024矩阵
-        trainingMat[i, :] = img2Vector("2.KNN/trainingDigits%s" % fileNamestr)
+        trainingMat[i, :] = img2Vector(
+            "/Users/yinxing/03workspace/self/MLAction/src/ML/2.KNN/trainingDigits/%s" % fileNamestr)
 
     # 2.导入测试数据
-    testFileList = listdir("2.KNN/testDigits")
+    testFileList = listdir("/Users/yinxing/03workspace/self/MLAction/src/ML/2.KNN/testDigits")
     errorCount = 0.0
     mTest = len(testFileList)
     for i in range(mTest):
         fileNamestr = testFileList[i]
         fileStr = fileNamestr.split(".")[0]
-        classNumStr = int(fileStr.split("_"))[0]
-        vectorUnderTest = img2Vector("2.KNN/testDigits/%s" % fileNamestr)
+        classNumStr = int(fileStr.split("_")[0])
+        vectorUnderTest = img2Vector(
+            "/Users/yinxing/03workspace/self/MLAction/src/ML/2.KNN/testDigits/%s" % fileNamestr)
         classifierResult = classfy0(vectorUnderTest, trainingMat, hwLables, 3)
         print("the classifier came back with: %d, the real answer is:%d" % (classifierResult, classNumStr))
         if (classifierResult != classNumStr):
             errorCount += 1.0
     print("\n the total number of error is:%d" % errorCount)
-    print("\n the total error rate is: %" % (errorCount / float(mTest)))
+    print("\n the total error rate is: %f" % (errorCount / float(mTest)))
 
 
 if __name__ == '__main__':
-    test1()
+    # test1()
     # datingClassTest()
-    # handwritringClassTest()
+    handwritringClassTest()
+
