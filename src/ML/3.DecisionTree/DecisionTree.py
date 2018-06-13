@@ -346,5 +346,5 @@ def contactLensesTest():
 
 
 if __name__ == '__main__':
-    # fishTest()
-    contactLensesTest()
+    fishTest()
+    # contactLensesTest()
