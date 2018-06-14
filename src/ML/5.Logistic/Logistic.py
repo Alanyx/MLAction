@@ -105,7 +105,8 @@ def stoGradAscent1(dataMatrix, classLabels, numIter=150):
     # 随机梯度，循环150次，观察是否收敛
     for j in range(numIter):
         # [0,1,2,3...,m-1]
-        dataIndex = range(m)
+        # 这里必须要用list，不然后面的del没法使用
+        dataIndex = list(range(m))
         for i in range(m):
             # 随着i和j的不断增大，alpha会随着迭代不断减小，后面有一个常数，永远不为0
             alpha = 4 / (1.0 + j + i) + 0.0001
@@ -166,7 +167,7 @@ def simpleTest():
     :return:
     """
     # 加载数据
-    dataMat, labelMat = loadDataSet("5.Logistic/TestSet.txt")
+    dataMat, labelMat = loadDataSet("/Users/yinxing/03workspace/self/MLAction/src/ML/5.Logistic/TestSet.txt")
     # 训练模型: f(x)=a1*x1+b2*x2+..+nn*xn中 (a1,b2, .., nn).T的矩阵值
     # 由于数组没有复制N份，array的乘法就是乘法
     dataArr = array(dataMat)
@@ -199,8 +200,8 @@ def colicTest():
     打开测试集和训练集，并对数据进行格式化处理
     :return: errorRate--分类错误率
     """
-    frTrain = open("5.Logistic/horseColicTraining.txt")
-    frTest = open("5.Logistic/horseColicTest.txt")
+    frTrain = open("/Users/yinxing/03workspace/self/MLAction/src/ML/5.Logistic/horseColicTraining.txt")
+    frTest = open("/Users/yinxing/03workspace/self/MLAction/src/ML/5.Logistic/horseColicTest.txt")
     trainingSet = []
     trainingLabels = []
     # 解析训练数据集中的数据特征和标签
@@ -245,4 +246,6 @@ def multiTest():
 
 
 if __name__ == '__main__':
-    classifyVector()
+    # simpleTest()
+    # colicTest()
+    multiTest()
